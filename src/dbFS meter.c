@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdbool.h>
+#include <math.h>
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
 #include "driverlib/debug.h"
@@ -70,15 +71,25 @@ void ADC0_Handler(void)
 
 int main(void)
 {
+	//calculate thresholds based on smalleset db increment
+	float threshold[12];
+	threshold[0] = 4095;
+	float dbValue = -3;
+	float multiplier = 10^(dbValue/20);
+	for (int i = 1; i < 11; i++)
+	{
+		threshold[i] = multiplier*threshold[i-1]);
+	}
+	
 	PinInit();	//initialize output pins
 	ADC0_Init();	//initialize ADC
 	IntMasterEnable();	//globally enable interrupt
 	ADCProcessorTrigger(ADC0_BASE, 1);
 	const int delay = 100;
-	const int thresh = 4095/12;
+	const int  = 1/2;
 	while (1)
 	{
-		if (ui32Sample<thresh)
+		if (ui32Sample<threshold[11])
 		{
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_0, 0x00);
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_1, 0x00);
@@ -93,7 +104,7 @@ int main(void)
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_6, 0x00);
 			SysCtlDelay(delay);
 		}
-		else if (ui32Sample<2*thresh)
+		else if (ui32Sample<threshold[10])
 		{
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_0, 0xFF);
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_1, 0x00);
@@ -108,7 +119,7 @@ int main(void)
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_6, 0x00);
 			SysCtlDelay(delay);
 		}
-		else if (ui32Sample<3*thresh)
+		else if (ui32Sample<threshold[9])
 		{
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_0, 0xFF);
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_1, 0xFF);
@@ -123,7 +134,7 @@ int main(void)
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_6, 0x00);
 			SysCtlDelay(delay);
 		}
-		else if (ui32Sample<4*thresh)
+		else if (ui32Sample<threshold[8])
 		{
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_0, 0xFF);
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_1, 0xFF);
@@ -138,7 +149,7 @@ int main(void)
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_6, 0x00);
 			SysCtlDelay(delay);
 		}
-		else if (ui32Sample<5*thresh)
+		else if (ui32Sample<threshold[7])
 		{
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_0, 0xFF);
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_1, 0xFF);
@@ -153,7 +164,7 @@ int main(void)
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_6, 0x00);
 			SysCtlDelay(delay);
 		}
-		else if (ui32Sample<6*thresh)
+		else if (ui32Sample<threshold[6])
 		{
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_0, 0xFF);
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_1, 0xFF);
@@ -168,7 +179,7 @@ int main(void)
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_6, 0x00);
 			SysCtlDelay(delay);
 		}
-		else if (ui32Sample<7*thresh)
+		else if (ui32Sample<threshold[5])
 		{
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_0, 0xFF);
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_1, 0xFF);
@@ -183,7 +194,7 @@ int main(void)
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_6, 0x00);
 			SysCtlDelay(delay);
 		}
-		else if (ui32Sample<8*thresh)
+		else if (ui32Sample<threshold[4])
 		{
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_0, 0xFF);
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_1, 0xFF);
@@ -198,7 +209,7 @@ int main(void)
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_6, 0x00);
 			SysCtlDelay(delay);
 		}
-		else if (ui32Sample<9*thresh)
+		else if (ui32Sample<threshold[3])
 		{
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_0, 0xFF);
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_1, 0xFF);
@@ -213,7 +224,7 @@ int main(void)
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_6, 0x00);
 			SysCtlDelay(delay);
 		}
-		else if (ui32Sample<10*thresh)
+		else if (ui32Sample<threshold[2])
 		{
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_0, 0xFF);
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_1, 0xFF);
@@ -228,7 +239,7 @@ int main(void)
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_6, 0x00);
 			SysCtlDelay(delay);
 		}
-		else if (ui32Sample<11*thresh)
+		else if (ui32Sample<threshold[1])
 		{
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_0, 0xFF);
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_1, 0xFF);
@@ -243,7 +254,7 @@ int main(void)
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_6, 0x00);
 			SysCtlDelay(delay);
 		}
-		else if (ui32Sample<12*thresh)
+		else if (ui32Sample<threshold[0])
 		{
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_0, 0xFF);
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_1, 0xFF);
