@@ -18,12 +18,22 @@ volatile uint32_t ui32Sample; //sample to be used in meter
 //pin initialization
 void PinInit()
 {
-	//enable clock for GPIO ports B, C
+	//enable clock for GPIO ports B, C, F
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);
+	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+	
 	//configures output pins
 	GPIOPinTypeGPIOOutput(GPIO_PORTB_BASE, GPIO_PIN_0 + GPIO_PIN_1 + GPIO_PIN_2 + GPIO_PIN_3 + GPIO_PIN_4 + GPIO_PIN_5 + GPIO_PIN_6 + GPIO_PIN_7);
 	GPIOPinTypeGPIOOutput(GPIO_PORTC_BASE, GPIO_PIN_4 + GPIO_PIN_5 + GPIO_PIN_6 + GPIO_PIN_7);
+	
+	//unlock the GPIO commit register
+	HWREG(GPIO_PORTF_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY;
+  HWREG(GPIO_PORTF_BASE + GPIO_O_CR) = 0x1;
+	//configure input pin
+	GPIOPinTypeGPIOInput(GPIO_PORTF_BASE, GPIO_PIN_0);
+	//enable pull up register
+	GPIO_PORTF_PUR_R |= 0x01;
 }
 
 //ADC initializaiton
@@ -84,11 +94,16 @@ int main(void)
 	PinInit();	//initialize output pins
 	ADC0_Init();	//initialize ADC
 	IntMasterEnable();	//globally enable interrupt
-	ADCProcessorTrigger(ADC0_BASE, 1);
+	ADCProcessorTrigger(ADC0_BASE, 1);	//trigger sample seqeuence
 	while (1)
 	{
-		//turn on the appropriate LEDs based on sampled signal
-		if (ui32Sample<threshold[11])
+		//is SW2 is pressed, reset clipping indicator
+		if(GPIOPinRead(GPIO_PORTF_BASE, GPIO_PIN_0)!=0x01)
+		{
+			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_7, 0x00);
+		}
+		//turn on the appropriate LEDs based on sample
+		else if (ui32Sample<threshold[11])
 		{
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_0, 0x00);
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_1, 0x00);
@@ -269,6 +284,7 @@ int main(void)
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_4, 0xFF);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_5, 0xFF);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_6, 0xFF);
+			//turn on clipping indicator
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_7, 0xFF);
 		}
 	}
