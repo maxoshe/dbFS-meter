@@ -15,10 +15,10 @@
 uint32_t ui32ADC0Value[1]; //data array to store samples from ADC SS1
 volatile uint32_t ui32Sample; //sample to be used in meter
 
-//output pin initialization
+//pin initialization
 void PinInit()
 {
-	//enable clock for GPIO ports B and C
+	//enable clock for GPIO ports B, C
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);
 	//configures output pins
@@ -71,24 +71,23 @@ void ADC0_Handler(void)
 
 int main(void)
 {
-	//calculate thresholds based on smalleset db increment
+	//calculate thresholds based on meter resolution in db
+	float dbValue = -1.5;
 	float threshold[12];
 	threshold[0] = 4095;
-	float dbValue = -3;
-	float multiplier = 10^(dbValue/20);
-	for (int i = 1; i < 11; i++)
+	float multiplier = pow(10,(dbValue/20));
+	for (int i = 1; i < 12; i++)
 	{
-		threshold[i] = multiplier*threshold[i-1]);
+		threshold[i] = multiplier*threshold[i-1];
 	}
 	
 	PinInit();	//initialize output pins
 	ADC0_Init();	//initialize ADC
 	IntMasterEnable();	//globally enable interrupt
 	ADCProcessorTrigger(ADC0_BASE, 1);
-	const int delay = 100;
-	const int  = 1/2;
 	while (1)
 	{
+		//turn on the appropriate LEDs based on sampled signal
 		if (ui32Sample<threshold[11])
 		{
 			GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_0, 0x00);
@@ -102,7 +101,6 @@ int main(void)
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_4, 0x00);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_5, 0x00);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_6, 0x00);
-			SysCtlDelay(delay);
 		}
 		else if (ui32Sample<threshold[10])
 		{
@@ -117,7 +115,6 @@ int main(void)
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_4, 0x00);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_5, 0x00);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_6, 0x00);
-			SysCtlDelay(delay);
 		}
 		else if (ui32Sample<threshold[9])
 		{
@@ -132,7 +129,6 @@ int main(void)
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_4, 0x00);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_5, 0x00);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_6, 0x00);
-			SysCtlDelay(delay);
 		}
 		else if (ui32Sample<threshold[8])
 		{
@@ -147,7 +143,6 @@ int main(void)
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_4, 0x00);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_5, 0x00);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_6, 0x00);
-			SysCtlDelay(delay);
 		}
 		else if (ui32Sample<threshold[7])
 		{
@@ -162,7 +157,6 @@ int main(void)
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_4, 0x00);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_5, 0x00);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_6, 0x00);
-			SysCtlDelay(delay);
 		}
 		else if (ui32Sample<threshold[6])
 		{
@@ -177,7 +171,6 @@ int main(void)
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_4, 0x00);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_5, 0x00);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_6, 0x00);
-			SysCtlDelay(delay);
 		}
 		else if (ui32Sample<threshold[5])
 		{
@@ -192,7 +185,6 @@ int main(void)
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_4, 0x00);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_5, 0x00);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_6, 0x00);
-			SysCtlDelay(delay);
 		}
 		else if (ui32Sample<threshold[4])
 		{
@@ -207,7 +199,6 @@ int main(void)
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_4, 0x00);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_5, 0x00);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_6, 0x00);
-			SysCtlDelay(delay);
 		}
 		else if (ui32Sample<threshold[3])
 		{
@@ -222,7 +213,6 @@ int main(void)
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_4, 0x00);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_5, 0x00);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_6, 0x00);
-			SysCtlDelay(delay);
 		}
 		else if (ui32Sample<threshold[2])
 		{
@@ -237,7 +227,6 @@ int main(void)
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_4, 0xFF);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_5, 0x00);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_6, 0x00);
-			SysCtlDelay(delay);
 		}
 		else if (ui32Sample<threshold[1])
 		{
@@ -252,7 +241,6 @@ int main(void)
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_4, 0xFF);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_5, 0xFF);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_6, 0x00);
-			SysCtlDelay(delay);
 		}
 		else if (ui32Sample<threshold[0])
 		{
@@ -267,7 +255,6 @@ int main(void)
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_4, 0xFF);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_5, 0xFF);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_6, 0xFF);
-			SysCtlDelay(delay);
 		}
 		else
 		{
@@ -283,7 +270,6 @@ int main(void)
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_5, 0xFF);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_6, 0xFF);
 			GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_7, 0xFF);
-			SysCtlDelay(delay);
 		}
 	}
 }
