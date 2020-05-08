@@ -11,9 +11,10 @@
 #include "driverlib/gpio.h"
 #include "inc/hw_gpio.h"
 
-//global variables for ADC samples
+//global variables
 uint32_t ui32ADC0Value[1]; //data array to store samples from ADC SS1
 volatile uint32_t ui32Sample; //sample to be used in meter
+volatile float threshold[12];
 
 //pin initialization
 void PinInit()
@@ -79,19 +80,21 @@ void ADC0_Handler(void)
 	ui32Sample = ui32ADC0Value[0];
 }
 
-int main(void)
+//calculate thresholds based on meter resolution in db
+void calculateThresh(float dbValue)
 {
-	//calculate thresholds based on meter resolution in db
-	float dbValue = -1.5;
-	float threshold[12];
 	threshold[0] = 4095;
 	float multiplier = pow(10,(dbValue/20));
 	for (int i = 1; i < 12; i++)
 	{
 		threshold[i] = multiplier*threshold[i-1];
 	}
-	
-	PinInit();	//initialize output pins
+}
+
+int main(void)
+{
+	calculateThresh(-1.5); //calculate thresholds for -1.5 resolution
+	PinInit();	//initialize GPIO pins
 	ADC0_Init();	//initialize ADC
 	IntMasterEnable();	//globally enable interrupt
 	ADCProcessorTrigger(ADC0_BASE, 1);	//trigger sample seqeuence
