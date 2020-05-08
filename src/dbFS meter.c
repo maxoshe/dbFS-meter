@@ -14,7 +14,7 @@
 //global variables
 uint32_t ui32ADC0Value[1]; //data array to store samples from ADC SS1
 volatile uint32_t ui32Sample; //sample to be used in meter
-volatile float threshold[12];
+volatile float threshold[12]; //data array to store thresholds from CalculateThresh()
 
 //pin initialization
 void PinInit()
@@ -81,7 +81,7 @@ void ADC0_Handler(void)
 }
 
 //calculate thresholds based on meter resolution in db
-void calculateThresh(float dbValue)
+void CalculateThresh(float dbValue)
 {
 	threshold[0] = 4095;
 	float multiplier = pow(10,(dbValue/20));
@@ -93,7 +93,7 @@ void calculateThresh(float dbValue)
 
 int main(void)
 {
-	calculateThresh(-1.5); //calculate thresholds for -1.5 resolution
+	CalculateThresh(-1.5); //calculate thresholds for -1.5db resolution
 	PinInit();	//initialize GPIO pins
 	ADC0_Init();	//initialize ADC
 	IntMasterEnable();	//globally enable interrupt
