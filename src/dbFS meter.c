@@ -29,7 +29,7 @@ void PinInit()
 	
 	//unlock the GPIO commit register
 	HWREG(GPIO_PORTF_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY;
-  HWREG(GPIO_PORTF_BASE + GPIO_O_CR) = 0x1;
+	HWREG(GPIO_PORTF_BASE + GPIO_O_CR) = 0x1;
 	//configure input pin
 	GPIOPinTypeGPIOInput(GPIO_PORTF_BASE, GPIO_PIN_0);
 	//enable pull up register
@@ -79,10 +79,9 @@ void ADC0_Handler(void)
 	ui32Sample = ui32ADC0Value[0];
 }
 
-int main(void)
+//calculate thresholds based on meter resolution in db
+float getThresholds(float dbValue)
 {
-	//calculate thresholds based on meter resolution in db
-	float dbValue = -1.5;
 	float threshold[12];
 	threshold[0] = 4095;
 	float multiplier = pow(10,(dbValue/20));
@@ -90,7 +89,11 @@ int main(void)
 	{
 		threshold[i] = multiplier*threshold[i-1];
 	}
-	
+	return threshold;
+}
+int main(void)
+{
+	float threshold[] = getThresholds(-1.5);	//calculate thresholds for -1.5db resolution
 	PinInit();	//initialize output pins
 	ADC0_Init();	//initialize ADC
 	IntMasterEnable();	//globally enable interrupt
