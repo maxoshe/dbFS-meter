@@ -79,9 +79,10 @@ void ADC0_Handler(void)
 	ui32Sample = ui32ADC0Value[0];
 }
 
-//calculate thresholds based on meter resolution in db
-float getThresholds(float dbValue)
+int main(void)
 {
+	//calculate thresholds based on meter resolution in db
+	float dbValue = -1.5;
 	float threshold[12];
 	threshold[0] = 4095;
 	float multiplier = pow(10,(dbValue/20));
@@ -89,11 +90,7 @@ float getThresholds(float dbValue)
 	{
 		threshold[i] = multiplier*threshold[i-1];
 	}
-	return threshold;
-}
-int main(void)
-{
-	float threshold[] = getThresholds(-1.5);	//calculate thresholds for -1.5db resolution
+	
 	PinInit();	//initialize output pins
 	ADC0_Init();	//initialize ADC
 	IntMasterEnable();	//globally enable interrupt
