@@ -93,7 +93,7 @@ void CalculateThresh(float dbValue)
 
 int main(void)
 {
-	CalculateThresh(-1.5); //calculate thresholds for -1.5db resolution
+	CalculateThresh(-3); //calculate thresholds for -3db resolution
 	PinInit();	//initialize GPIO pins
 	ADC0_Init();	//initialize ADC
 	IntMasterEnable();	//globally enable interrupt
