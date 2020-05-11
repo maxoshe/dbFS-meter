@@ -40,8 +40,8 @@ void PinInit()
 //ADC initializaiton
 void ADC0_Init(void)
 {
-	// configure the system clock to be 40MHz
-	SysCtlClockSet(SYSCTL_SYSDIV_5|SYSCTL_USE_PLL|SYSCTL_OSC_MAIN|SYSCTL_XTAL_16MHZ);
+	// configure the system clock to be 80MHz
+	SysCtlClockSet(SYSCTL_SYSDIV_2_5|SYSCTL_USE_PLL|SYSCTL_XTAL_16MHZ|SYSCTL_OSC_MAIN);
 	//enable clock for ADC0 and GPIO port E
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0);
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
