@@ -1,4 +1,4 @@
-# dbFS-meter by Moshe Stanylov
+# dbFS-meter
 
 This is an implementation of a decibel Full Scale audio meter on the Arm Cortex-M4F microcontroller.
 The system is designed to recieve an instrument level signal and amplify it using an LM741 op amp chip.
